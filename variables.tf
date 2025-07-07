@@ -25,6 +25,12 @@ variable "network_resources" {
   default = []
 }
 
+variable "create_setup_key" {
+  description = "Whether to create a setup key for the group"
+  type        = bool
+  default     = true
+}
+
 variable "setup_key_name" {
   description = "Name of the setup key"
   type        = string
@@ -34,11 +40,11 @@ variable "setup_key_name" {
 variable "setup_key_config" {
   description = "Configuration for the setup key"
   type = object({
-    type                     = optional(string, "reusable")
-    expiry_seconds           = optional(number, 0)
-    usage_limit              = optional(number, 0)
-    ephemeral                = optional(bool, false)
-    allow_extra_dns_labels   = optional(bool, true)
+    type                   = optional(string, "reusable")
+    expiry_seconds         = optional(number, 0)
+    usage_limit            = optional(number, 0)
+    ephemeral              = optional(bool, false)
+    allow_extra_dns_labels = optional(bool, true)
   })
   default = {}
 }

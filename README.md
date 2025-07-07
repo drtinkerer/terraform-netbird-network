@@ -43,6 +43,29 @@ module "homelab_network" {
 }
 ```
 
+### Without Setup Key
+
+```hcl
+module "network_only" {
+  source = "cloudpoet-in/network/netbird"
+
+  network_name        = "Network Only"
+  network_description = "Network without setup key"
+  group_name          = "Manual-Group"
+  
+  create_setup_key = false  # Disable setup key creation
+  
+  network_resources = [
+    {
+      name        = "Internal Services"
+      description = "Internal API services"
+      address     = "10.0.1.0/24"
+      enabled     = true
+    }
+  ]
+}
+```
+
 ### Advanced Example
 
 ```hcl
@@ -88,7 +111,7 @@ module "production_network" {
     masquerade = true
   }
 
-  allowed_source_groups = ["Developers", "DevOps", "Admins"]
+  allowed_source_groups = ["All"]  # Add other existing groups as needed
   create_access_policy  = true
   enable_routing        = true
 }
@@ -118,6 +141,7 @@ module "production_network" {
 | setup_key_name | Name of the setup key | `string` | `"Setup Key"` | no |
 | setup_key_config | Configuration for the setup key | `object({...})` | `{}` | no |
 | allowed_source_groups | List of group names that should have access to this group | `list(string)` | `["All"]` | no |
+| create_setup_key | Whether to create a setup key for the group | `bool` | `true` | no |
 | enable_routing | Enable network routing for the group | `bool` | `true` | no |
 | router_config | Configuration for the network router | `object({...})` | `{}` | no |
 | create_access_policy | Create policy to allow specified groups to access this group | `bool` | `true` | no |
@@ -164,8 +188,8 @@ router_config = {
 | network_name | Name of the created network |
 | group_id | ID of the created group |
 | group_name | Name of the created group |
-| setup_key_id | ID of the setup key |
-| setup_key | The setup key for devices (sensitive) |
+| setup_key_id | ID of the setup key (if created) |
+| setup_key | The setup key for devices (if created, sensitive) |
 | network_resources | Map of network resources created |
 | router_id | ID of the network router (if enabled) |
 | policy_id | ID of the access policy (if created) |

@@ -19,24 +19,26 @@ resource "netbird_network_resource" "this" {
 }
 
 resource "netbird_setup_key" "this" {
-  name                     = var.setup_key_name
-  type                     = var.setup_key_config.type
-  expiry_seconds           = var.setup_key_config.expiry_seconds
-  usage_limit              = var.setup_key_config.usage_limit
-  auto_groups              = [netbird_group.this.id]
-  ephemeral                = var.setup_key_config.ephemeral
-  revoked                  = false
-  allow_extra_dns_labels   = var.setup_key_config.allow_extra_dns_labels
+  count = var.create_setup_key ? 1 : 0
+
+  name                   = var.setup_key_name
+  type                   = var.setup_key_config.type
+  expiry_seconds         = var.setup_key_config.expiry_seconds
+  usage_limit            = var.setup_key_config.usage_limit
+  auto_groups            = [netbird_group.this.id]
+  ephemeral              = var.setup_key_config.ephemeral
+  revoked                = false
+  allow_extra_dns_labels = var.setup_key_config.allow_extra_dns_labels
 }
 
 resource "netbird_network_router" "this" {
   count = var.enable_routing ? 1 : 0
 
-  network_id   = netbird_network.this.id
-  peer_groups  = [netbird_group.this.id]
-  metric       = var.router_config.metric
-  enabled      = true
-  masquerade   = var.router_config.masquerade
+  network_id  = netbird_network.this.id
+  peer_groups = [netbird_group.this.id]
+  metric      = var.router_config.metric
+  enabled     = true
+  masquerade  = var.router_config.masquerade
 }
 
 data "netbird_group" "allowed_sources" {
@@ -52,11 +54,11 @@ resource "netbird_policy" "group_access" {
   enabled     = true
 
   rule {
-    name         = "Allow access to ${var.group_name}"
-    action       = "accept"
+    name          = "Allow access to ${var.group_name}"
+    action        = "accept"
     bidirectional = true
-    protocol     = "all"
-    sources      = [for group in data.netbird_group.allowed_sources : group.id]
-    destinations = [netbird_group.this.id]
+    protocol      = "all"
+    sources       = [for group in data.netbird_group.allowed_sources : group.id]
+    destinations  = [netbird_group.this.id]
   }
 }

@@ -1,7 +1,10 @@
 terraform {
+  required_version = ">= 1.0"
+
   required_providers {
     netbird = {
-      source = "netbirdio/netbird"
+      source  = "netbirdio/netbird"
+      version = ">= 0.0.3"
     }
   }
 }
@@ -27,6 +30,8 @@ module "simple_network" {
       enabled     = true
     }
   ]
+
+  create_setup_key = true # Create setup key for device enrollment
 
   # Use defaults for other configurations
 }

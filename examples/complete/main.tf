@@ -1,7 +1,10 @@
 terraform {
+  required_version = ">= 1.0"
+
   required_providers {
     netbird = {
-      source = "netbirdio/netbird"
+      source  = "netbirdio/netbird"
+      version = ">= 0.0.3"
     }
   }
 }
@@ -65,11 +68,11 @@ module "homelab_network" {
   ]
 
   setup_key_config = {
-    type                     = "reusable"
-    expiry_seconds           = 0
-    usage_limit              = 0
-    ephemeral                = false
-    allow_extra_dns_labels   = true
+    type                   = "reusable"
+    expiry_seconds         = 0
+    usage_limit            = 0
+    ephemeral              = false
+    allow_extra_dns_labels = true
   }
 
   router_config = {
@@ -77,7 +80,8 @@ module "homelab_network" {
     masquerade = true
   }
 
-  allowed_source_groups = ["All", "Developers", "Admins"]
+  allowed_source_groups = ["All"]
+  create_setup_key      = true
   create_access_policy  = true
   enable_routing        = true
 }
