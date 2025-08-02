@@ -4,7 +4,7 @@ terraform {
   required_providers {
     netbird = {
       source  = "netbirdio/netbird"
-      version = ">= 0.0.3"
+      version = "~> 0.0.3"
     }
   }
 }
@@ -17,26 +17,26 @@ provider "netbird" {
 module "manual_network" {
   source = "../../"
 
-  network_name        = "Manual Network"
-  network_description = "Network without automatic setup key"
-  group_name          = "Manual-Assignment-Group"
+  network_name        = "manual-network"
+  network_description = "Network for manual device assignment (no setup key)"
 
-  network_resources = [
-    {
-      name        = "Production Services"
+  network_resources = {
+    "production-services" = {
       description = "Production environment services"
       address     = "10.0.1.0/24"
       enabled     = true
-    },
-    {
-      name        = "Database Cluster"
+    }
+    "database-cluster" = {
       description = "Database servers"
       address     = "10.0.2.0/24"
       enabled     = true
     }
-  ]
+  }
 
-  create_setup_key     = false # No automatic setup key
-  create_access_policy = true
-  enable_routing       = true
+  # No setup key creation (default: false)
+  # No routing configuration (routing_peer_group_id = null)
+  # No access policy (create_default_policy = false)
+
+  # This creates only the network and resource group
+  # Devices must be manually assigned to the created group
 }

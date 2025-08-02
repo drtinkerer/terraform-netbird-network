@@ -4,7 +4,7 @@ terraform {
   required_providers {
     netbird = {
       source  = "netbirdio/netbird"
-      version = ">= 0.0.3"
+      version = "~> 0.0.3"
     }
   }
 }
@@ -17,21 +17,19 @@ provider "netbird" {
 module "simple_network" {
   source = "../../"
 
-  network_name        = "Simple Network"
+  network_name        = "simple-network"
   network_description = "A simple NetBird network"
-  group_name          = "Auto-Assigned-Group"
-  setup_key_name      = "Simple Setup Key"
 
-  network_resources = [
-    {
-      name        = "Local Network"
+  network_resources = {
+    "local-network" = {
       description = "Local home network"
       address     = "192.168.1.0/24"
       enabled     = true
     }
-  ]
-
-  create_setup_key = true # Create setup key for device enrollment
+  }
 
   # Use defaults for other configurations
+  # - create_setup_key = false (default)
+  # - create_default_policy = false (default)
+  # - routing_peer_group_id = null (no routing)
 }
