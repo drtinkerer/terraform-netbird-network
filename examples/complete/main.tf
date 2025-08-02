@@ -70,24 +70,24 @@ module "homelab_network" {
   }
 
   # Router configuration (will default to the group created by this module)
-  # routing_peer_group_id = "d26p92daofms73c1pgu0"  # Uncomment to override with custom group
+  # routing_peer_group_id = "your-custom-group-id"  # Uncomment to override with custom group
   router_config = {
     metric     = 100
     masquerade = true
     enabled    = true
   }
 
-  # Access policy configuration
-  create_default_policy = true # No policy since no source groups specified
-  policy_config = {
-    name          = "homelab-policy"
-    description   = "Allow access to Homelab"
-    rule_name     = "Allow access to Homelab"
-    protocol      = "all"
-    action        = "accept"
-    bidirectional = false
-    ports         = []
-  }
-  allowed_source_groups = ["d26p92daofms73c1pgu0"]
+  # Access policy configuration (commented out - uncomment and provide source groups to enable)
+  # create_default_policy = true
+  # policy_config = {
+  #   name          = "homelab-policy"
+  #   description   = "Allow access to Homelab"
+  #   rule_name     = "Allow access to Homelab"
+  #   protocol      = "all"
+  #   action        = "accept"
+  #   bidirectional = false
+  #   ports         = []
+  # }
+  # allowed_source_groups = ["your-source-group-id"]
 
 }
