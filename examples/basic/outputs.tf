@@ -1,5 +1,5 @@
 output "setup_key" {
-  description = "The setup key for devices"
+  description = "The setup key for devices (null if not created)"
   value       = module.simple_network.setup_key
   sensitive   = true
 }

@@ -18,11 +18,13 @@ resource "netbird_network_resource" "this" {
   enabled     = each.value.enabled
 }
 
-resource "netbird_network_router" "this" {
-  count = var.routing_peer_group_id != null ? 1 : 0
+locals {
+  effective_routing_peer_group_id = var.routing_peer_group_id != null ? var.routing_peer_group_id : netbird_group.this.id
+}
 
+resource "netbird_network_router" "this" {
   network_id  = netbird_network.this.id
-  peer_groups = [var.routing_peer_group_id]
+  peer_groups = [local.effective_routing_peer_group_id]
   metric      = var.router_config.metric
   enabled     = var.router_config.enabled
   masquerade  = var.router_config.masquerade
@@ -53,7 +55,7 @@ resource "netbird_setup_key" "this" {
   type                   = var.setup_key_config.type
   expiry_seconds         = var.setup_key_config.expiry_seconds
   usage_limit            = var.setup_key_config.usage_limit
-  auto_groups            = [var.routing_peer_group_id]
+  auto_groups            = [local.effective_routing_peer_group_id]
   ephemeral              = var.setup_key_config.ephemeral
   revoked                = false
   allow_extra_dns_labels = var.setup_key_config.allow_extra_dns_labels

@@ -21,7 +21,7 @@ variable "network_resources" {
 }
 
 variable "routing_peer_group_id" {
-  description = "ID of the peer group to use for network routing"
+  description = "ID of the peer group to use for network routing. Defaults to the group created by this module if not specified."
   type        = string
   default     = null
 }

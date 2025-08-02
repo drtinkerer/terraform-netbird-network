@@ -4,7 +4,7 @@ terraform {
   required_providers {
     netbird = {
       source  = "netbirdio/netbird"
-      version = "~> 0.0.3"
+      version = ">= 0.0.3"
     }
   }
 }
@@ -12,19 +12,6 @@ terraform {
 provider "netbird" {
   token          = var.netbird_token
   management_url = var.netbird_management_url
-}
-
-# Get existing groups for routing and access control
-data "netbird_group" "routers" {
-  name = "homelab-routers" # Assumes this group exists
-}
-
-data "netbird_group" "clients" {
-  name = "homelab-clients" # Assumes this group exists  
-}
-
-data "netbird_group" "admins" {
-  name = "admins" # Assumes this group exists
 }
 
 module "homelab_network" {
@@ -50,10 +37,9 @@ module "homelab_network" {
       enabled     = true
     }
     "internal-services" = {
-      description       = "Internal services and APIs"
-      address           = "10.0.0.0/16"
-      enabled           = true
-      additional_groups = [data.netbird_group.admins.id] # Admins also get access
+      description = "Internal services and APIs"
+      address     = "10.0.0.0/16"
+      enabled     = true
     }
     "home-assistant" = {
       description = "Home Assistant instance"
@@ -61,10 +47,9 @@ module "homelab_network" {
       enabled     = true
     }
     "nas-storage" = {
-      description       = "Network attached storage"
-      address           = "nas.home.local"
-      enabled           = true
-      additional_groups = [data.netbird_group.admins.id] # Admins also get access
+      description = "Network attached storage"
+      address     = "nas.home.local"
+      enabled     = true
     }
     "plex-server" = {
       description = "Plex media streaming server"
@@ -73,29 +58,7 @@ module "homelab_network" {
     }
   }
 
-  # Configure routing through dedicated router group
-  routing_peer_group_id = data.netbird_group.routers.id
-
-  router_config = {
-    metric     = 100
-    masquerade = true
-    enabled    = true
-  }
-
-  # Create access policy for clients
-  create_default_policy = true
-  allowed_source_groups = [data.netbird_group.clients.id, data.netbird_group.admins.id]
-
-  policy_config = {
-    name          = "Homelab Network Access"
-    description   = "Allow clients and admins to access homelab resources"
-    protocol      = "tcp"
-    ports         = ["80", "443", "8080", "8123", "32400"] # HTTP, HTTPS, Alt HTTP, Home Assistant, Plex
-    bidirectional = false
-    enabled       = true
-  }
-
-  # Create setup key for router enrollment
+  # Setup key configuration
   create_setup_key = true
   setup_key_config = {
     name                   = "homelab-router-key"
@@ -105,4 +68,26 @@ module "homelab_network" {
     ephemeral              = false
     allow_extra_dns_labels = true
   }
+
+  # Router configuration (will default to the group created by this module)
+  # routing_peer_group_id = "d26p92daofms73c1pgu0"  # Uncomment to override with custom group
+  router_config = {
+    metric     = 100
+    masquerade = true
+    enabled    = true
+  }
+
+  # Access policy configuration
+  create_default_policy = true # No policy since no source groups specified
+  policy_config = {
+    name          = "homelab-policy"
+    description   = "Allow access to Homelab"
+    rule_name     = "Allow access to Homelab"
+    protocol      = "all"
+    action        = "accept"
+    bidirectional = false
+    ports         = []
+  }
+  allowed_source_groups = ["d26p92daofms73c1pgu0"]
+
 }

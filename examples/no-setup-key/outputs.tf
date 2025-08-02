@@ -5,7 +5,7 @@ output "network_id" {
 
 output "group_id" {
   description = "ID of the created group"
-  value       = module.manual_network.group_id
+  value       = module.manual_network.default_resource_group_id
 }
 
 output "setup_key" {

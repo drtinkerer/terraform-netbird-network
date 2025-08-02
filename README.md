@@ -7,7 +7,7 @@ A Terraform module for creating and managing NetBird networks with automatic pee
 - **Network Creation**: Create NetBird networks with custom descriptions
 - **Auto-named Resource Groups**: Automatically create resource groups with naming convention `resources-{network_name}`
 - **Network Resources**: Map-based resource management with support for CIDR blocks and domain names
-- **Advanced Routing**: External peer group-based routing with granular control
+- **Advanced Routing**: Automatic routing through the module's resource group, with optional override for external peer groups
 - **Enhanced Access Policies**: Port-specific access control with configurable protocols and bidirectional rules
 - **Flexible Setup Keys**: Optional setup key generation for device enrollment with external group assignment
 - **Multi-Group Resources**: Support for assigning resources to additional groups beyond the default resource group
@@ -34,6 +34,13 @@ module "homelab_network" {
       address     = "nas.home.local"
       enabled     = true
     }
+  }
+
+  # Router will automatically use the module's resource group
+  router_config = {
+    metric     = 100
+    masquerade = true
+    enabled    = true
   }
 }
 ```
@@ -205,7 +212,7 @@ module "multi_tier_network" {
 | network_name | Name of the NetBird network | `string` | n/a | yes |
 | network_description | Description of the NetBird network | `string` | `""` | no |
 | network_resources | Map of network resources to create (keyed by resource identifier) | `map(object({...}))` | `{}` | no |
-| routing_peer_group_id | ID of the peer group to use for network routing | `string` | `null` | no |
+| routing_peer_group_id | ID of the peer group to use for network routing. Defaults to the group created by this module if not specified. | `string` | `null` | no |
 | router_config | Configuration for the network router | `object({...})` | `{}` | no |
 | create_default_policy | Whether to create a default access policy for this network | `bool` | `false` | no |
 | policy_config | Configuration for the access policy | `object({...})` | `{}` | no |
@@ -274,7 +281,7 @@ setup_key_config = {
 | default_resource_group_name | Name of the default resource group |
 | network_resources | Map of network resource IDs keyed by resource name |
 | network_resources_details | Map of network resources with full details, keyed by resource name |
-| router_id | ID of the network router (if created) |
+| router_id | ID of the network router |
 | policy_id | ID of the default access policy (if created) |
 | setup_key_id | ID of the setup key (if created) |
 | setup_key | The actual setup key for device enrollment (if created, sensitive) |

@@ -39,8 +39,8 @@ output "network_resources_details" {
 }
 
 output "router_id" {
-  description = "ID of the network router (if created)"
-  value       = var.routing_peer_group_id != null ? netbird_network_router.this[0].id : null
+  description = "ID of the network router"
+  value       = netbird_network_router.this.id
 }
 
 output "policy_id" {
