@@ -18,7 +18,7 @@ A Terraform module for creating and managing NetBird networks with automatic pee
 
 ```hcl
 module "homelab_network" {
-  source = "cloudpoet-in/network/netbird"
+  source = "drtinkerer/network/netbird"
 
   network_name        = "homelab"
   network_description = "Home laboratory network"
@@ -58,7 +58,7 @@ data "netbird_group" "clients" {
 }
 
 module "production_network" {
-  source = "cloudpoet-in/network/netbird"
+  source = "drtinkerer/network/netbird"
 
   network_name        = "production"
   network_description = "Production environment network"
@@ -126,7 +126,7 @@ data "netbird_group" "routers" {
 }
 
 module "multi_tier_network" {
-  source = "cloudpoet-in/network/netbird"
+  source = "drtinkerer/network/netbird"
 
   network_name        = "multi-tier"
   network_description = "Multi-tier application network with fine-grained access control"
